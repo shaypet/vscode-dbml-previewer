@@ -2,6 +2,9 @@ const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
 
+// Track the active preview panel
+let activePreviewPanel = null;
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -41,7 +44,31 @@ function activate(context) {
 		readFileAndPreview(context, uri.fsPath);
 	});
 
-	context.subscriptions.push(previewCommand, previewFromExplorerCommand);
+	// Register export to PNG command
+	const exportToPNGCommand = vscode.commands.registerCommand('dbml-previewer.exportToPNG', function () {
+		if (!activePreviewPanel) {
+			vscode.window.showWarningMessage('No active DBML preview found. Please open a DBML preview first.');
+			return;
+		}
+
+		activePreviewPanel.webview.postMessage({
+			type: 'exportToPNG'
+		});
+	});
+
+	// Register export to SVG command
+	const exportToSVGCommand = vscode.commands.registerCommand('dbml-previewer.exportToSVG', function () {
+		if (!activePreviewPanel) {
+			vscode.window.showWarningMessage('No active DBML preview found. Please open a DBML preview first.');
+			return;
+		}
+
+		activePreviewPanel.webview.postMessage({
+			type: 'exportToSVG'
+		});
+	});
+
+	context.subscriptions.push(previewCommand, previewFromExplorerCommand, exportToPNGCommand, exportToSVGCommand);
 }
 
 /**
@@ -78,13 +105,22 @@ function createPreviewPanel(context, filePath, content) {
 		}
 	);
 
+	// Track this as the active preview panel
+	activePreviewPanel = panel;
+
+	// Set context for command availability
+	vscode.commands.executeCommand('setContext', 'dbmlPreviewerActive', true);
+
 	// Get configuration
 	const config = vscode.workspace.getConfiguration('diagram');
 	const inheritThemeStyle = config.get('inheritThemeStyle', true);
 	const edgeType = config.get('edgeType', 'smoothstep');
+	const exportQuality = config.get('exportQuality', 0.95);
+	const exportBackground = config.get('exportBackground', true);
+	const exportPadding = config.get('exportPadding', 20);
 
 	// Set the webview content
-	panel.webview.html = getWebviewContent(content, fileName, filePath, panel.webview, inheritThemeStyle, edgeType);
+	panel.webview.html = getWebviewContent(content, fileName, filePath, panel.webview, inheritThemeStyle, edgeType, exportQuality, exportBackground, exportPadding);
 
 	// Handle messages from the webview
 	panel.webview.onDidReceiveMessage(
@@ -98,10 +134,16 @@ function createPreviewPanel(context, filePath, content) {
 					const currentConfig = vscode.workspace.getConfiguration('diagram');
 					const currentInheritThemeStyle = currentConfig.get('inheritThemeStyle', true);
 					const currentEdgeType = currentConfig.get('edgeType', 'smoothstep');
+					const currentExportQuality = currentConfig.get('exportQuality', 0.95);
+					const currentExportBackground = currentConfig.get('exportBackground', true);
+					const currentExportPadding = currentConfig.get('exportPadding', 20);
 					panel.webview.postMessage({
 						type: 'configuration',
 						inheritThemeStyle: currentInheritThemeStyle,
-						edgeType: currentEdgeType
+						edgeType: currentEdgeType,
+						exportQuality: currentExportQuality,
+						exportBackground: currentExportBackground,
+						exportPadding: currentExportPadding
 					});
 					break;
 			}
@@ -112,14 +154,24 @@ function createPreviewPanel(context, filePath, content) {
 
 	// Listen for configuration changes
 	const configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-		if (event.affectsConfiguration('diagram.inheritThemeStyle') || event.affectsConfiguration('diagram.edgeType')) {
+		if (event.affectsConfiguration('diagram.inheritThemeStyle') ||
+		    event.affectsConfiguration('diagram.edgeType') ||
+		    event.affectsConfiguration('diagram.exportQuality') ||
+		    event.affectsConfiguration('diagram.exportBackground') ||
+		    event.affectsConfiguration('diagram.exportPadding')) {
 			const config = vscode.workspace.getConfiguration('diagram');
 			const inheritThemeStyle = config.get('inheritThemeStyle', true);
 			const edgeType = config.get('edgeType', 'smoothstep');
+			const exportQuality = config.get('exportQuality', 0.95);
+			const exportBackground = config.get('exportBackground', true);
+			const exportPadding = config.get('exportPadding', 20);
 			panel.webview.postMessage({
 				type: 'configurationChanged',
 				inheritThemeStyle: inheritThemeStyle,
-				edgeType: edgeType
+				edgeType: edgeType,
+				exportQuality: exportQuality,
+				exportBackground: exportBackground,
+				exportPadding: exportPadding
 			});
 		}
 	});
@@ -143,6 +195,11 @@ function createPreviewPanel(context, filePath, content) {
 	// Clean up watcher when panel is disposed
 	panel.onDidDispose(() => {
 		fileWatcher.dispose();
+		// Clear active panel reference
+		if (activePreviewPanel === panel) {
+			activePreviewPanel = null;
+			vscode.commands.executeCommand('setContext', 'dbmlPreviewerActive', false);
+		}
 	});
 
 	context.subscriptions.push(fileWatcher);
@@ -156,9 +213,12 @@ function createPreviewPanel(context, filePath, content) {
  * @param {vscode.Webview} webview
  * @param {boolean} inheritThemeStyle
  * @param {string} edgeType
+ * @param {number} exportQuality
+ * @param {boolean} exportBackground
+ * @param {number} exportPadding
  * @returns {string}
  */
-function getWebviewContent(content, fileName, filePath, webview, inheritThemeStyle, edgeType) {
+function getWebviewContent(content, fileName, filePath, webview, inheritThemeStyle, edgeType, exportQuality, exportBackground, exportPadding) {
 	// Get the local path to main script run in the webview
 	const scriptPathOnDisk = vscode.Uri.file(path.join(__dirname, 'dist', 'webview.js'));
 	const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
@@ -193,6 +253,9 @@ function getWebviewContent(content, fileName, filePath, webview, inheritThemeSty
 			window.filePath = ${JSON.stringify(filePath)};
 			window.inheritThemeStyle = ${JSON.stringify(inheritThemeStyle)};
 			window.edgeType = ${JSON.stringify(edgeType)};
+			window.exportQuality = ${JSON.stringify(exportQuality)};
+			window.exportBackground = ${JSON.stringify(exportBackground)};
+			window.exportPadding = ${JSON.stringify(exportPadding)};
 		</script>
 		<script src="${scriptUri}"></script>
 	</body>
