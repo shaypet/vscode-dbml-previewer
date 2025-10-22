@@ -2,7 +2,7 @@
   "name": "dbml-previewer",
   "displayName": "DBML Previewer",
   "description": "Transform DBML files into interactive visual database diagrams with drag-and-drop tables, relationship tooltips, multi-schema support, and real-time preview updates",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "rizkykurniawan",
   "author": {
     "name": "Rizky Kurniawan",
@@ -59,6 +59,18 @@
         "command": "dbml-previewer.previewFromExplorer",
         "title": "Preview DBML",
         "category": "DBML Previewer"
+      },
+      {
+        "command": "dbml-previewer.exportToPNG",
+        "title": "Export Diagram to PNG",
+        "category": "DBML Previewer",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "dbml-previewer.exportToSVG",
+        "title": "Export Diagram to SVG",
+        "category": "DBML Previewer",
+        "icon": "$(file-media)"
       }
     ],
     "menus": {
@@ -91,6 +103,14 @@
         {
           "command": "dbml-previewer.previewFromExplorer",
           "when": "false"
+        },
+        {
+          "command": "dbml-previewer.exportToPNG",
+          "when": "dbmlPreviewerActive"
+        },
+        {
+          "command": "dbml-previewer.exportToSVG",
+          "when": "dbmlPreviewerActive"
         }
       ]
     },
@@ -140,6 +160,25 @@
             "Bezier curve edge"
           ],
           "description": "The type of edge/connection lines to use for table relationships in the diagram."
+        },
+        "diagram.exportQuality": {
+          "type": "number",
+          "default": 0.95,
+          "minimum": 0.1,
+          "maximum": 1.0,
+          "description": "Image quality for PNG exports (0.1 to 1.0). Higher values produce better quality but larger file sizes."
+        },
+        "diagram.exportBackground": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include background in exported images. When disabled, exported images have a transparent background."
+        },
+        "diagram.exportPadding": {
+          "type": "number",
+          "default": 20,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Padding around the diagram in exported images (in pixels)."
         }
       }
     }
@@ -159,7 +198,8 @@
     "react-dom": "^18.2.0",
     "@xyflow/react": "^12.0.0",
     "dagre": "^0.8.5",
-    "@dbml/core": "^3.2.0"
+    "@dbml/core": "^3.2.0",
+    "html-to-image": "1.11.11"
   },
   "devDependencies": {
     "@types/vscode": "^1.102.0",

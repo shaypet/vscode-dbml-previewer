@@ -13,6 +13,12 @@ Perfect for database architects, developers, and anyone working with database sc
 
 ## 🌟 What's New
 
+### v1.1.0 - Export Feature Release
+- 📤 **Export to PNG/SVG**: Save your diagrams as high-quality images
+- 🎛️ **Export Configuration**: Customize image quality, background, and padding
+- ⌨️ **Multiple Access Points**: Export via UI buttons or VSCode commands
+- 🖼️ **Professional Output**: High-resolution exports with transparent background option
+
 ### v1.0.0 - Major Configuration Release
 - ⚙️ **Theme Configuration**: Choose between VS Code theme inheritance or clean light theme (default: light)
 - 🔗 **Edge Type Options**: 4 relationship line styles - straight, step, smoothstep, and bezier
@@ -48,7 +54,13 @@ Perfect for database architects, developers, and anyone working with database sc
 ✅ **Flexible Theming** - Choose VS Code theme inheritance or clean light theme
 ✅ **Multiple Access Points** - Command palette, context menu, keyboard shortcuts
 ✅ **Side-by-Side Editing** - Preview alongside your DBML file
-✅ **Quick Access** - `Ctrl+Shift+D` / `Cmd+Shift+D` keyboard shortcut  
+✅ **Quick Access** - `Ctrl+Shift+D` / `Cmd+Shift+D` keyboard shortcut
+
+### 📤 **Professional Export Capabilities**
+✅ **PNG Export** - High-resolution raster images for documentation
+✅ **SVG Export** - Scalable vector graphics for presentations
+✅ **Configurable Quality** - Adjust image quality and resolution
+✅ **Background Control** - Export with or without background color  
 
 ## 🚀 Get Started in 30 Seconds
 
@@ -162,14 +174,42 @@ The extension works out of the box with sensible defaults and includes the follo
     - `"smoothstep"` - Smooth step edges with rounded corners (recommended)
     - `"bezier"` - Curved bezier edges for organic appearance
 
+### Export Configuration
+- **`diagram.exportQuality`** (number, default: `0.95`)
+  - Image quality for PNG exports (0.1 to 1.0)
+  - Higher values produce better quality but larger file sizes
+  - Recommended: 0.95 for high-quality exports
+
+- **`diagram.exportBackground`** (boolean, default: `true`)
+  - Include background in exported images
+  - When disabled, exported images have transparent background
+  - Useful for presentations and documentation
+
+- **`diagram.exportPadding`** (number, default: `20`)
+  - Padding around the diagram in exported images (in pixels)
+  - Range: 0-100 pixels
+  - Provides visual breathing room around your diagram
+
 ### How to Configure
 1. Open VS Code Settings (`Ctrl+,` / `Cmd+,`)
 2. Search for "diagram" or "DBML Previewer"
 3. Adjust settings to your preference
 4. Changes apply immediately without restart
 
+### How to Export
+**Via UI Buttons (recommended):**
+1. Open any DBML file and preview it
+2. Look for export buttons in the top-right stats panel
+3. Click "📷 Export PNG" or "🖼️ Export SVG"
+4. Image downloads automatically with timestamped filename
+
+**Via Command Palette:**
+1. Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+2. Search for "Export Diagram to PNG" or "Export Diagram to SVG"
+3. Execute the command
+4. Image downloads automatically
+
 ### Future Configuration Options
-- Export settings and formats
 - Performance optimization toggles
 - Advanced layout algorithm options
 
@@ -219,12 +259,6 @@ If you encounter any problems:
 - 💻 **VS Code**: 1.102.0+
 - 📄 **File Format**: `.dbml` files (DBML v2 syntax)
 - 🚀 **Zero Setup**: No additional dependencies required!
-
-## 🛣️ What's Coming Next
-
-### 🔜 **Coming Soon**
-- 📤 **Export to PNG/SVG/PDF** - Save your diagrams
-- 🎨 **Custom Themes** - Personalize your diagrams
 
 ## 📄 License
 

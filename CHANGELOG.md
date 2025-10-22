@@ -2,6 +2,37 @@
 
 All notable changes to the "dbml-previewer" extension will be documented in this file.
 
+## 1.1.0
+
+### Added
+- **PNG Export**: Export diagrams as high-resolution PNG images (2x pixel ratio for crisp quality)
+- **SVG Export**: Export diagrams as scalable vector graphics for presentations and documentation
+- **Export Configuration Options**: Three new settings to customize export output:
+  - `diagram.exportQuality` (0.1-1.0, default: 0.95) - PNG image quality control
+  - `diagram.exportBackground` (boolean, default: true) - Toggle background inclusion for transparent exports
+  - `diagram.exportPadding` (0-100px, default: 20) - Configurable padding around exported diagrams
+- **Export Commands**: New VSCode commands accessible via Command Palette:
+  - "Export Diagram to PNG" - Export current diagram as PNG image
+  - "Export Diagram to SVG" - Export current diagram as SVG vector image
+- **Export UI Buttons**: Convenient export buttons in the stats panel (top-right):
+  - 📷 Export PNG button
+  - 🖼️ Export SVG button
+- **Smart Filename Generation**: Automatic timestamped filenames based on DBML file name
+
+### Improved
+- **Clean Export Output**: UI controls (minimap, panels, navigation) automatically hidden during export
+- **Professional Image Quality**: High-resolution exports suitable for documentation and presentations
+- **Transparent Background Support**: Option to export diagrams with transparent backgrounds for flexible use
+- **Error Handling**: Graceful error recovery with automatic UI restoration if export fails
+
+### Technical
+- Added `html-to-image@1.11.11` dependency (recommended version per XY Flow documentation)
+- Enhanced `DBMLPreview.js` with export handlers: `handleExportToPng()` and `handleExportToSvg()`
+- Updated `extension.js` with export command registration and active panel tracking
+- Implemented context management (`dbmlPreviewerActive`) for command availability
+- Added temporary UI hiding during export with automatic restoration
+- Configuration synchronization between extension and webview for export settings
+
 ## 1.0.0
 
 ### Added
@@ -177,11 +208,11 @@ All notable changes to the "dbml-previewer" extension will be documented in this
 ## [Unreleased]
 
 ### Planned Features
-- Export options (PNG, SVG, PDF)
-- Search and filter functionality
-- Theme customization options
-- Minimap for large schemas
+- Export to PDF format
+- Advanced search and filter functionality
+- Custom theme creation and color schemes
 - Schema comparison tools
 - Performance optimizations for very large databases
 - Column note tooltips enhancement
 - Bulk table operations
+- Diagram statistics and analytics

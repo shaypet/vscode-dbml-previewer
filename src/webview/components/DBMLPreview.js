@@ -11,6 +11,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { toPng, toSvg } from 'html-to-image';
 import themeManager, { getThemeVar } from '../styles/themeManager.js';
 import { Parser } from '@dbml/core';
 import TableNode from './TableNode';
@@ -96,7 +97,131 @@ const DBMLPreview = ({ initialContent }) => {
   const [currentTheme, setCurrentTheme] = useState({});
   const [inheritThemeStyle, setInheritThemeStyle] = useState(true);
   const [edgeType, setEdgeType] = useState('smoothstep');
+  const [exportQuality, setExportQuality] = useState(0.95);
+  const [exportBackground, setExportBackground] = useState(true);
+  const [exportPadding, setExportPadding] = useState(20);
 
+
+  // Export handlers
+  const handleExportToPng = useCallback(async () => {
+    try {
+      const flowElement = document.querySelector('.react-flow');
+      if (!flowElement) {
+        console.error('React Flow element not found');
+        return;
+      }
+
+      // Hide UI elements before export
+      const controls = flowElement.querySelector('.react-flow__controls');
+      const minimap = flowElement.querySelector('.react-flow__minimap');
+      const panels = flowElement.querySelectorAll('.react-flow__panel');
+
+      const elementsToHide = [controls, minimap, ...Array.from(panels)].filter(Boolean);
+      elementsToHide.forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // Wait a moment for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Generate filename based on file path or default
+      const fileName = window.filePath
+        ? window.filePath.split('/').pop().replace('.dbml', '')
+        : 'dbml-diagram';
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+
+      const dataUrl = await toPng(flowElement, {
+        quality: exportQuality,
+        backgroundColor: exportBackground ? getThemeVar('background') : 'transparent',
+        pixelRatio: 2, // Higher resolution for better quality
+        style: {
+          padding: `${exportPadding}px`,
+        }
+      });
+
+      // Restore UI elements
+      elementsToHide.forEach(el => {
+        el.style.display = '';
+      });
+
+      const link = document.createElement('a');
+      link.download = `${fileName}_${timestamp}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Error exporting to PNG:', error);
+      // Restore UI elements in case of error
+      const flowElement = document.querySelector('.react-flow');
+      if (flowElement) {
+        const controls = flowElement.querySelector('.react-flow__controls');
+        const minimap = flowElement.querySelector('.react-flow__minimap');
+        const panels = flowElement.querySelectorAll('.react-flow__panel');
+        [controls, minimap, ...Array.from(panels)].filter(Boolean).forEach(el => {
+          el.style.display = '';
+        });
+      }
+      alert('Failed to export diagram to PNG. Please try again.');
+    }
+  }, [exportQuality, exportBackground, exportPadding]);
+
+  const handleExportToSvg = useCallback(async () => {
+    try {
+      const flowElement = document.querySelector('.react-flow');
+      if (!flowElement) {
+        console.error('React Flow element not found');
+        return;
+      }
+
+      // Hide UI elements before export
+      const controls = flowElement.querySelector('.react-flow__controls');
+      const minimap = flowElement.querySelector('.react-flow__minimap');
+      const panels = flowElement.querySelectorAll('.react-flow__panel');
+
+      const elementsToHide = [controls, minimap, ...Array.from(panels)].filter(Boolean);
+      elementsToHide.forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // Wait a moment for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Generate filename based on file path or default
+      const fileName = window.filePath
+        ? window.filePath.split('/').pop().replace('.dbml', '')
+        : 'dbml-diagram';
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+
+      const dataUrl = await toSvg(flowElement, {
+        backgroundColor: exportBackground ? getThemeVar('background') : 'transparent',
+        style: {
+          padding: `${exportPadding}px`,
+        }
+      });
+
+      // Restore UI elements
+      elementsToHide.forEach(el => {
+        el.style.display = '';
+      });
+
+      const link = document.createElement('a');
+      link.download = `${fileName}_${timestamp}.svg`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Error exporting to SVG:', error);
+      // Restore UI elements in case of error
+      const flowElement = document.querySelector('.react-flow');
+      if (flowElement) {
+        const controls = flowElement.querySelector('.react-flow__controls');
+        const minimap = flowElement.querySelector('.react-flow__minimap');
+        const panels = flowElement.querySelectorAll('.react-flow__panel');
+        [controls, minimap, ...Array.from(panels)].filter(Boolean).forEach(el => {
+          el.style.display = '';
+        });
+      }
+      alert('Failed to export diagram to SVG. Please try again.');
+    }
+  }, [exportBackground, exportPadding]);
 
   // Disabled manual connections for preview-only mode
   const onConnect = useCallback(() => {
@@ -493,9 +618,21 @@ const DBMLPreview = ({ initialContent }) => {
     const initialEdgeType = window.edgeType !== undefined
       ? window.edgeType
       : 'smoothstep';
+    const initialExportQuality = window.exportQuality !== undefined
+      ? window.exportQuality
+      : 0.95;
+    const initialExportBackground = window.exportBackground !== undefined
+      ? window.exportBackground
+      : true;
+    const initialExportPadding = window.exportPadding !== undefined
+      ? window.exportPadding
+      : 20;
 
     setInheritThemeStyle(initialInheritThemeStyle);
     setEdgeType(initialEdgeType);
+    setExportQuality(initialExportQuality);
+    setExportBackground(initialExportBackground);
+    setExportPadding(initialExportPadding);
 
     // Initialize theme manager
     themeManager.initialize(initialInheritThemeStyle);
@@ -541,6 +678,15 @@ const DBMLPreview = ({ initialContent }) => {
           if (message.edgeType !== undefined) {
             setEdgeType(message.edgeType);
           }
+          if (message.exportQuality !== undefined) {
+            setExportQuality(message.exportQuality);
+          }
+          if (message.exportBackground !== undefined) {
+            setExportBackground(message.exportBackground);
+          }
+          if (message.exportPadding !== undefined) {
+            setExportPadding(message.exportPadding);
+          }
           break;
         case 'configurationChanged':
           // Handle configuration changes
@@ -551,6 +697,21 @@ const DBMLPreview = ({ initialContent }) => {
           if (message.edgeType !== undefined) {
             setEdgeType(message.edgeType);
           }
+          if (message.exportQuality !== undefined) {
+            setExportQuality(message.exportQuality);
+          }
+          if (message.exportBackground !== undefined) {
+            setExportBackground(message.exportBackground);
+          }
+          if (message.exportPadding !== undefined) {
+            setExportPadding(message.exportPadding);
+          }
+          break;
+        case 'exportToPNG':
+          handleExportToPng();
+          break;
+        case 'exportToSVG':
+          handleExportToSvg();
           break;
       }
     };
@@ -798,6 +959,45 @@ const DBMLPreview = ({ initialContent }) => {
             >
               Reset Layout
             </button>
+            <div style={{
+              marginTop: '8px',
+              paddingTop: '8px',
+              borderTop: `1px solid ${getThemeVar('panelBorder')}`,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px'
+            }}>
+              <button
+                onClick={handleExportToPng}
+                style={{
+                  background: getThemeVar('buttonBackground'),
+                  color: getThemeVar('buttonForeground'),
+                  border: `1px solid ${getThemeVar('buttonBorder')}`,
+                  padding: '4px 8px',
+                  borderRadius: '2px',
+                  fontSize: '10px',
+                  cursor: 'pointer'
+                }}
+                title="Export diagram as PNG image"
+              >
+                📷 Export PNG
+              </button>
+              <button
+                onClick={handleExportToSvg}
+                style={{
+                  background: getThemeVar('buttonBackground'),
+                  color: getThemeVar('buttonForeground'),
+                  border: `1px solid ${getThemeVar('buttonBorder')}`,
+                  padding: '4px 8px',
+                  borderRadius: '2px',
+                  fontSize: '10px',
+                  cursor: 'pointer'
+                }}
+                title="Export diagram as SVG vector image"
+              >
+                🖼️ Export SVG
+              </button>
+            </div>
           </div>
         </Panel>
       </ReactFlow>
