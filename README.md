@@ -13,22 +13,17 @@ Perfect for database architects, developers, and anyone working with database sc
 
 ## 🌟 What's New
 
-### v1.1.0 - Export Feature Release
+### v1.2.0 - Color Customization Release
+- 🎨 **Custom Table Colors**: Use `headercolor` property to customize individual table header colors
+- 🌈 **Custom Group Colors**: Apply custom colors to table groups with the `color` property
+- ♿ **Smart Text Contrast**: Automatic white/black text selection based on background brightness
+- ✅ **WCAG Compliance**: Accessible color contrast ratios for all custom colors
+
+### Previous Updates
 - 📤 **Export to PNG/SVG**: Save your diagrams as high-quality images
 - 🎛️ **Export Configuration**: Customize image quality, background, and padding
 - ⌨️ **Multiple Access Points**: Export via UI buttons or VSCode commands
 - 🖼️ **Professional Output**: High-resolution exports with transparent background option
-
-### v1.0.0 - Major Configuration Release
-- ⚙️ **Theme Configuration**: Choose between VS Code theme inheritance or clean light theme (default: light)
-- 🔗 **Edge Type Options**: 4 relationship line styles - straight, step, smoothstep, and bezier
-- 🎨 **Centralized Theming**: All components now use consistent, reliable styling
-- ⚡ **Real-time Updates**: Configuration changes apply instantly without restart
-
-### Previous Updates
-- 📝 **Smart Table Notes**: Click note icons to view table notes in clean popup tooltips
-- 🎯 **Enhanced UX**: No more broken layouts with long table notes
-- 🔄 **Improved Performance**: Optimized rendering and interaction handling
 
 ## ⚡ Key Features
 
@@ -92,22 +87,22 @@ Project sample_project {
   Note: 'Sample e-commerce database schema'
 }
 
-Table users {
+Table users [headercolor: #27AE60] {
   id integer [primary key, increment]
   username varchar(50) [not null, unique]
   email varchar(100) [not null, unique]
   created_at timestamp [default: `now()`]
-  
+
   Note: 'User accounts table'
 }
 
-Table orders {
+Table orders [headercolor: #3498DB] {
   id integer [primary key, increment]
   user_id integer [not null, ref: > users.id]
   total decimal(10,2) [not null]
   status varchar(20) [default: 'pending']
   created_at timestamp [default: `now()`]
-  
+
   Note: 'Customer orders'
 }
 
@@ -134,6 +129,7 @@ This extension supports the full DBML specification including:
 - ✅ **Table Notes**
 - ✅ **Indexes** (simple and composite)
 - ✅ **Table Groups** for schema organization
+- ✅ **Custom Colors** for tables (`headercolor`) and groups (`color`)
 - ✅ **Multi-schema** database support
 - ✅ **Default Values** and **Auto-increment** fields
 

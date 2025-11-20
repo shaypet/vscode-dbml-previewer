@@ -1,5 +1,6 @@
 import React from 'react';
 import { getThemeVar } from '../styles/themeManager.js';
+import { parseHeaderColor, getContrastColor } from '../utils/colorUtils.js';
 
 const TableHeaderNode = ({ data }) => {
   const { table, columnCount = 0, tableWidth = 200, hasMultipleSchema = false, onTableNoteClick } = data;
@@ -13,6 +14,13 @@ const TableHeaderNode = ({ data }) => {
   if (hasMultipleSchema && table.schemaName) {
     title = `${table.schemaName}.${table.name}`;
   }
+
+  // Determine header colors
+  const customHeaderColor = parseHeaderColor(table.headerColor);
+  const headerBackgroundColor = customHeaderColor || getThemeVar('buttonBackground');
+  const headerTextColor = customHeaderColor
+    ? getContrastColor(customHeaderColor)
+    : getThemeVar('buttonForeground');
 
   return (
     <div style={{
@@ -29,8 +37,8 @@ const TableHeaderNode = ({ data }) => {
         borderTop: `2px solid ${getThemeVar('panelBorder')}`,
         borderLeft: `2px solid ${getThemeVar('panelBorder')}`,
         borderRight: `2px solid ${getThemeVar('panelBorder')}`,
-        background: getThemeVar('buttonBackground'),
-        color: getThemeVar('buttonForeground'),
+        background: headerBackgroundColor,
+        color: headerTextColor,
         padding: '8px 12px',
         fontWeight: 'bold',
         fontSize: '14px',
@@ -57,7 +65,7 @@ const TableHeaderNode = ({ data }) => {
             style={{
               background: 'none',
               border: 'none',
-              color: getThemeVar('buttonForeground'),
+              color: headerTextColor,
               cursor: 'pointer',
               fontSize: '12px',
               padding: '2px 4px',
