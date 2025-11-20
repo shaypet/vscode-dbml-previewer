@@ -2,6 +2,47 @@
 
 All notable changes to the "dbml-previewer" extension will be documented in this file.
 
+## 1.2.0
+
+### Added
+- **Custom Table Header Colors**: Support for DBML `headercolor` property to customize individual table header colors
+- **Custom Table Group Colors**: Support for DBML table group `color` property to customize table group styling
+- **Automatic Text Contrast**: Smart text color calculation using WCAG luminance formula for optimal readability
+  - Automatically chooses white or black text based on background brightness
+  - Ensures accessible contrast ratios for all custom colors
+- **Color Validation**: Hex color format validation with console warnings for invalid colors
+- **Graceful Fallback**: Seamless fallback to theme colors when custom colors are not specified
+
+### Improved
+- **Visual Customization**: Tables and table groups can now have distinct colors for better visual organization
+- **Accessibility**: Improved text readability on custom-colored headers through automatic contrast calculation
+- **Theme Integration**: Custom colors work seamlessly with existing theme system and VS Code theme inheritance
+
+### Technical
+- Added `src/webview/utils/colorUtils.js` - Color utility functions for validation and contrast calculation
+  - `isValidHexColor()` - Validates hex color format (#fff or #ffffff)
+  - `getContrastColor()` - Calculates optimal text color using WCAG luminance formula
+  - `parseHeaderColor()` - Validates and normalizes color values with warning logs
+- Updated `src/webview/components/TableHeaderNode.js` - Apply custom header colors when available
+- Updated `src/webview/components/TableGroupNode.js` - Apply custom group colors with proper transparency
+- Color support for all table group states: normal (10%), hover (15%), and selected (20%) transparency
+
+### DBML Syntax Examples
+- **Table with custom header color**:
+  ```dbml
+  Table Users [headercolor: #27AE60] {
+    id int [pk]
+    username varchar
+  }
+  ```
+- **Table group with custom color**:
+  ```dbml
+  TableGroup UserManagement [color: #ED9C6E] {
+    Users
+    Roles
+  }
+  ```
+
 ## 1.1.0
 
 ### Added

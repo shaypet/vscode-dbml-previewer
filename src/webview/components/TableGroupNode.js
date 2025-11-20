@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getThemeVar } from '../styles/themeManager.js';
+import { parseHeaderColor, getContrastColor } from '../utils/colorUtils.js';
 
 const TableGroupNode = ({ data, selected }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -9,17 +10,24 @@ const TableGroupNode = ({ data, selected }) => {
     return null;
   }
 
+  // Determine group colors
+  const customGroupColor = parseHeaderColor(tableGroup.color);
+  const groupBackgroundColor = customGroupColor || getThemeVar('buttonBackground');
+  const groupTextColor = customGroupColor
+    ? getContrastColor(customGroupColor)
+    : getThemeVar('buttonForeground');
+
   const groupStyle = {
     boxSizing: 'border-box',
     position: 'relative',
     width: '100%',
     height: '100%',
     backgroundColor: selected
-      ? `color-mix(in srgb, ${getThemeVar('buttonBackground')} 20%, transparent)`
+      ? `color-mix(in srgb, ${groupBackgroundColor} 20%, transparent)`
       : isHovered
-        ? `color-mix(in srgb, ${getThemeVar('buttonBackground')} 15%, transparent)`
-        : `color-mix(in srgb, ${getThemeVar('buttonBackground')} 10%, transparent)`,
-    border: `2px solid ${getThemeVar('buttonBackground')}`,
+        ? `color-mix(in srgb, ${groupBackgroundColor} 15%, transparent)`
+        : `color-mix(in srgb, ${groupBackgroundColor} 10%, transparent)`,
+    border: `2px solid ${groupBackgroundColor}`,
     borderRadius: '8px',
     zIndex: -1,
     transition: 'all 0.2s ease-in-out',
@@ -32,10 +40,10 @@ const TableGroupNode = ({ data, selected }) => {
     top: '0',
     left: '0',
     transform: 'translate(0, -120%)',
-    backgroundColor: getThemeVar('buttonBackground'),
-    color: getThemeVar('buttonForeground'),
+    backgroundColor: groupBackgroundColor,
+    color: groupTextColor,
     padding: '16px 12px',
-    border: `2px solid ${getThemeVar('buttonBackground')}`,
+    border: `2px solid ${groupBackgroundColor}`,
     fontSize: '14px',
     fontWeight: 'bold',
     borderRadius: '8px',
@@ -45,7 +53,7 @@ const TableGroupNode = ({ data, selected }) => {
 
   const noteStyle = {
     boxSizing: 'border-box',
-    color: getThemeVar('buttonForeground'),
+    color: groupTextColor,
     marginTop: '10px',
     fontSize: '9px',
     fontStyle: 'italic',
