@@ -51,29 +51,62 @@ const TableNavigationPanel = ({ dbmlData }) => {
     if (option.type === 'table') {
       const tableNodeId = `table-${option.value}`;
       const tableNode = getNode(tableNodeId);
-      
+
       if (tableNode) {
         const { x, y } = tableNode.position;
         const tableWidth = tableNode.data?.tableWidth || 200;
         const tableHeight = 42 + (tableNode.data?.columnCount || 0) * 30 + 16; // header + columns + padding
-        
+
         // Center on the table with some offset
         const centerX = x + tableWidth / 2;
         const centerY = y + tableHeight / 2;
-        
-        setCenter(centerX, centerY, { zoom: 1, duration: 800 });
+
+        setCenter(centerX, centerY, { zoom: 1.5, duration: 800 });
       }
     }
   }, [setCenter, getNode]);
 
   return (
     <Panel position="top-left">
-      <TableNavigationDropdown 
-        dbmlData={dbmlData} 
+      <TableNavigationDropdown
+        dbmlData={dbmlData}
         onTableSelect={handleTableSelect}
       />
     </Panel>
   );
+};
+
+// Component that provides table navigation functionality to parent
+const EdgeNavigationProvider = ({ setNavigationHandler }) => {
+  const { setCenter, getNode } = useReactFlow();
+
+  // Create navigation handler function
+  useEffect(() => {
+    const navigationHandler = (option) => {
+      if (option.type === 'table') {
+        const tableNodeId = `table-${option.value}`;
+        const tableNode = getNode(tableNodeId);
+
+        if (tableNode) {
+          const { x, y } = tableNode.position;
+          const tableWidth = tableNode.data?.tableWidth || 200;
+          const tableHeight = 42 + (tableNode.data?.columnCount || 0) * 30 + 16; // header + columns + padding
+
+          // Center on the table with some offset
+          const centerX = x + tableWidth / 2;
+          const centerY = y + tableHeight / 2;
+
+          setCenter(centerX, centerY, { zoom: 1.5, duration: 800 });
+        }
+      }
+    };
+
+    // Pass the handler to parent
+    setNavigationHandler(navigationHandler);
+  }, [setCenter, getNode, setNavigationHandler]);
+
+  // This component doesn't render anything
+  return null;
 };
 
 const DBMLPreview = ({ initialContent }) => {
@@ -100,6 +133,7 @@ const DBMLPreview = ({ initialContent }) => {
   const [exportQuality, setExportQuality] = useState(0.95);
   const [exportBackground, setExportBackground] = useState(true);
   const [exportPadding, setExportPadding] = useState(20);
+  const [handleTableNavigation, setHandleTableNavigation] = useState(null);
 
 
   // Export handlers
@@ -223,6 +257,11 @@ const DBMLPreview = ({ initialContent }) => {
     }
   }, [exportBackground, exportPadding]);
 
+  // Callback to receive navigation function from EdgeNavigationProvider
+  const setNavigationHandler = useCallback((navigationFn) => {
+    setHandleTableNavigation(() => navigationFn);
+  }, []);
+
   // Disabled manual connections for preview-only mode
   const onConnect = useCallback(() => {
     // No-op: Manual connections disabled in preview mode
@@ -329,7 +368,7 @@ const DBMLPreview = ({ initialContent }) => {
         setSelectedEdgeIds(new Set());
         setColumnTooltipData(null);
         setTableNoteTooltipData(null);
-          }
+      }
     };
 
     const handleClickOutside = (event) => {
@@ -342,7 +381,7 @@ const DBMLPreview = ({ initialContent }) => {
         setSelectedEdgeIds(new Set());
         setColumnTooltipData(null);
         setTableNoteTooltipData(null);
-          }
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -737,7 +776,7 @@ const DBMLPreview = ({ initialContent }) => {
         // Clean up obsolete positions first
         const tableHeaderIds = [];
         const stickyNoteIds = [];
-        
+
         // Collect table IDs
         dbmlData.schemas?.forEach(schema => {
           schema.tables?.forEach(table => {
@@ -745,14 +784,14 @@ const DBMLPreview = ({ initialContent }) => {
             tableHeaderIds.push(`table-${fullName}`);
           });
         });
-        
+
         // Collect sticky note IDs
         if (dbmlData.notes) {
           dbmlData.notes.forEach(note => {
             stickyNoteIds.push(`note-${note.name}`);
           });
         }
-        
+
         const allCurrentIds = [...tableHeaderIds, ...stickyNoteIds];
         const cleanedPositions = cleanupObsoletePositions(currentSavedPositions, allCurrentIds);
         if (Object.keys(cleanedPositions).length !== Object.keys(currentSavedPositions).length) {
@@ -918,8 +957,9 @@ const DBMLPreview = ({ initialContent }) => {
             borderRadius: '4px'
           }}
         />
-        
+
         <TableNavigationPanel dbmlData={dbmlData} />
+        <EdgeNavigationProvider setNavigationHandler={setNavigationHandler} />
 
         {/* Stats Panel - Top Right */}
         <Panel position="top-right">
@@ -1007,6 +1047,7 @@ const DBMLPreview = ({ initialContent }) => {
           edge={tooltipData.edge}
           position={tooltipData.position}
           onClose={handleCloseTooltip}
+          onTableClick={handleTableNavigation}
         />
       )}
 

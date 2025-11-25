@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { getThemeVar } from '../styles/themeManager.js';
 
-const EdgeTooltip = ({ edge, position, onClose }) => {
+const EdgeTooltip = ({ edge, position, onClose, onTableClick }) => {
   const tooltipRef = useRef(null);
 
   useEffect(() => {
@@ -25,6 +25,15 @@ const EdgeTooltip = ({ edge, position, onClose }) => {
       document.removeEventListener('keydown', handleEscKey);
     };
   }, [onClose]);
+
+  const handleTableClick = (table) => {
+    if (onTableClick && table) {
+      onTableClick({
+        type: 'table',
+        value: table
+      });
+    }
+  }
 
   if (!edge || !position) {
     return null;
@@ -54,7 +63,9 @@ const EdgeTooltip = ({ edge, position, onClose }) => {
 
     return {
       source: `${sourceTable}.${sourceColumn} = ${getRelationType(sourceRelation)}`,
-      target: `${targetTable}.${targetColumn} = ${getRelationType(targetRelation)}`
+      target: `${targetTable}.${targetColumn} = ${getRelationType(targetRelation)}`,
+      sourceTable,
+      targetTable,
     }
   };
 
@@ -95,10 +106,12 @@ const EdgeTooltip = ({ edge, position, onClose }) => {
     wordBreak: 'break-all'
   };
 
-  const cardinalityStyle = {
-    fontSize: '11px',
-    color: getThemeVar('descriptionForeground'),
-    fontWeight: 'bold'
+  const tableLinkStyle = {
+    color: getThemeVar('textLinkForeground'),
+    textDecoration: 'none',
+    cursor: 'pointer',
+    fontWeight: '500',
+    borderBottom: `1px dotted ${getThemeVar('textLinkForeground')}`
   };
 
   const closeButtonStyle = {
@@ -129,8 +142,60 @@ const EdgeTooltip = ({ edge, position, onClose }) => {
 
       <div style={headerStyle}>Relationship</div>
       <div style={relationshipStyle}>
-        <div>{relationshipInfo.source}</div>
-        <div>{relationshipInfo.target}</div>
+        <div style={{ marginBottom: '4px' }}>
+          {relationshipInfo.sourceTable ? (
+            <>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); handleTableClick(relationshipInfo.sourceTable); }}
+                style={tableLinkStyle}
+                onMouseOver={(e) => {
+                  e.target.style.color = getThemeVar('textLinkActiveForeground');
+                  e.target.style.borderBottomStyle = 'solid';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.color = getThemeVar('textLinkForeground');
+                  e.target.style.borderBottomStyle = 'dotted';
+                }}
+                title="Click to navigate to this table"
+              >
+                {relationshipInfo.sourceTable}
+              </a>
+              <span style={{ color: getThemeVar('descriptionForeground') }}>
+                {relationshipInfo.source.substring(relationshipInfo.sourceTable.length)}
+              </span>
+            </>
+          ) : (
+            <span>{relationshipInfo.source}</span>
+          )}
+        </div>
+        <div>
+          {relationshipInfo.targetTable ? (
+            <>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); handleTableClick(relationshipInfo.targetTable); }}
+                style={tableLinkStyle}
+                onMouseOver={(e) => {
+                  e.target.style.color = getThemeVar('textLinkActiveForeground');
+                  e.target.style.borderBottomStyle = 'solid';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.color = getThemeVar('textLinkForeground');
+                  e.target.style.borderBottomStyle = 'dotted';
+                }}
+                title="Click to navigate to this table"
+              >
+                {relationshipInfo.targetTable}
+              </a>
+              <span style={{ color: getThemeVar('descriptionForeground') }}>
+                {relationshipInfo.target.substring(relationshipInfo.targetTable.length)}
+              </span>
+            </>
+          ) : (
+            <span>{relationshipInfo.target}</span>
+          )}
+        </div>
       </div>
     </div>
   );
