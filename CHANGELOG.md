@@ -2,6 +2,31 @@
 
 All notable changes to the "dbml-previewer" extension will be documented in this file.
 
+## 1.3.0
+
+### Added
+- **Clickable Table Names in Relationship Tooltips**: Table names in relationship tooltips are now clickable for quick navigation
+  - Click any table name in a relationship tooltip to instantly navigate to that table
+  - Visual link styling with dotted underline and hover effects
+  - Uses VS Code theme colors for consistent appearance
+  - Tooltip shows "Click to navigate to this table" on hover
+
+### Improved
+- **Enhanced Navigation Zoom**: Increased zoom level from 1.0x to 1.5x when navigating to tables for better visibility
+  - Applies to both dropdown table selection and relationship tooltip table clicks
+  - Smoother navigation experience with larger, more readable tables
+  - Better focus on the target table with appropriate zoom level
+
+### Technical
+- Added `EdgeNavigationProvider` component in `src/webview/components/DBMLPreview.js` for cross-component navigation
+- Enhanced `src/webview/components/EdgeTooltip.js` with clickable table name functionality:
+  - Added `handleTableClick()` function to handle table navigation
+  - Extracts source and target table names from relationship data
+  - Applies theme-aware link styling with hover states
+  - Integrates with navigation system for smooth transitions
+- Updated table navigation zoom level to 1.5x in both navigation paths
+- Implemented proper event handling with preventDefault() for link clicks
+
 ## 1.2.0
 
 ### Added

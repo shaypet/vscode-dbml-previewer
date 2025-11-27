@@ -13,13 +13,21 @@ Perfect for database architects, developers, and anyone working with database sc
 
 ## 🌟 What's New
 
-### v1.2.0 - Color Customization Release
+### v1.3.0 - Navigation Enhancement Release
+- 🔗 **Clickable Table Names in Tooltips**: Navigate instantly by clicking table names in relationship tooltips
+- 🔍 **Enhanced Zoom Navigation**: Improved zoom level (1.5x) when navigating to tables for better visibility
+- ✨ **Interactive Relationships**: Hover and click table names with VS Code theme-aware styling
+- 🎯 **Smoother Navigation**: Better focus and readability when jumping between related tables
+
+### Previous Updates
+
+#### v1.2.0 - Color Customization
 - 🎨 **Custom Table Colors**: Use `headercolor` property to customize individual table header colors
 - 🌈 **Custom Group Colors**: Apply custom colors to table groups with the `color` property
 - ♿ **Smart Text Contrast**: Automatic white/black text selection based on background brightness
 - ✅ **WCAG Compliance**: Accessible color contrast ratios for all custom colors
 
-### Previous Updates
+#### v1.1.0 - Export Features
 - 📤 **Export to PNG/SVG**: Save your diagrams as high-quality images
 - 🎛️ **Export Configuration**: Customize image quality, background, and padding
 - ⌨️ **Multiple Access Points**: Export via UI buttons or VSCode commands
@@ -34,9 +42,10 @@ Perfect for database architects, developers, and anyone working with database sc
 ✅ **Smart Table Notes** - Clean popup tooltips for table documentation  
 
 ### 🔗 **Intelligent Relationship Mapping**
-✅ **Visual Connections** - See foreign key relationships at a glance  
-✅ **Interactive Tooltips** - Click relationships for detailed information  
-✅ **Column-Level Precision** - Exact source and target column identification  
+✅ **Visual Connections** - See foreign key relationships at a glance
+✅ **Interactive Tooltips** - Click relationships for detailed information
+✅ **Clickable Navigation** - Click table names in tooltips to navigate instantly
+✅ **Column-Level Precision** - Exact source and target column identification
 ✅ **Cardinality Display** - Clear 1:1, 1:*, *:* relationship indicators  
 
 ### 📊 **Enterprise-Ready Schema Support**
@@ -144,6 +153,7 @@ This extension supports the full DBML specification including:
 - **Drag Tables**: Click and drag table headers to reposition
 - **Group Movement**: Drag table groups to move all contained tables
 - **Relationship Details**: Click relationship lines for detailed information
+- **Navigate via Tooltips**: Click table names in relationship tooltips to jump to that table
 
 ### Keyboard Shortcuts
 - `Ctrl+Shift+D` / `Cmd+Shift+D`: Open DBML preview
