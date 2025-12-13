@@ -295,3 +295,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 *"From DBML text to visual database understanding in seconds"*
 
 </div>
+
+
+CHANGES
