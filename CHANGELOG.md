@@ -284,3 +284,4 @@ All notable changes to the "dbml-previewer" extension will be documented in this
 - Diagram statistics and analytics
 
 asasd
+asasd
