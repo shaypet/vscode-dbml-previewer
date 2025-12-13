@@ -1,6 +1,6 @@
 # Change Log
 
-All notable changes to the "dbml-previewer" extension will be documented in this file.
+All notable changes to the "dbml-paasdasdreviewer" extension will be documented in this file.
 
 ## 1.3.0
 
