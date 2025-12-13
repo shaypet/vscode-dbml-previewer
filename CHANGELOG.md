@@ -282,3 +282,5 @@ All notable changes to the "dbml-previewer" extension will be documented in this
 - Column note tooltips enhancement
 - Bulk table operations
 - Diagram statistics and analytics
+
+asasd
