@@ -1,6 +1,6 @@
 # Contributing to DBML Previewer
 
-Thank you for your interest in contributing to DBML Previewer! We welcome contributions from the community and are grateful for any help you can provide.
+Thank you for your interest in contributing to DBML Previewer! We welcome contributions from the community and are grateful for any help you can provide.asdasdasd
 
 ## 🤝 Ways to Contribute
 
@@ -34,7 +34,7 @@ Help improve our documentation:
 - Update README or wiki
 
 ## 🚀 Development Setup
-
+asfasfa
 ### Prerequisites
 - **Node.js**: Version 16 or higher
 - **npm**: Package manager

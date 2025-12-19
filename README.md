@@ -1,5 +1,5 @@
 # 🚀 DBML Previewer
-
+asd
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-Marketplace-blue)](https://marketplace.visualstudio.com/items?itemName=rizkykurniawan.dbml-previewer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub issues](https://img.shields.io/github/issues/kykurniawan/vscode-dbml-previewer)](https://github.com/kykurniawan/vscode-dbml-previewer/issues)
@@ -295,3 +295,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 *"From DBML text to visual database understanding in seconds"*
 
 </div>
+
+
+CHANGES
