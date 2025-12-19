@@ -165,7 +165,7 @@
           "type": "number",
           "default": 0.95,
           "minimum": 0.1,
-          "maximum": 1.0,
+          "maximum": 1,
           "description": "Image quality for PNG exports (0.1 to 1.0). Higher values produce better quality but larger file sizes."
         },
         "diagram.exportBackground": {
@@ -191,7 +191,8 @@
     "watch": "webpack --mode development --watch",
     "vscode:prepublish": "npm run build",
     "package": "vsce package --no-yarn",
-    "publish": "vsce publish --no-yarn"
+    "publish": "vsce publish --no-yarn",
+    "dev": "code --extensionDevelopmentPath=. --disable-extensions"
   },
   "dependencies": {
     "react": "^18.2.0",
